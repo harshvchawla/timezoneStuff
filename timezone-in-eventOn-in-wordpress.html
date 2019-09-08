@@ -1,0 +1,52 @@
+<!-- working example hosted at https://dev.theputtytribe.com/events/utc-event-by-harsh/ -->
+
+<div id="start_time">Start Time (local)</div>
+<div id="end_time">End time (local)</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.26/moment-timezone.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.26/moment-timezone-with-data.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.6/jstz.min.js"></script>
+        
+<script> try{
+function convertIntoTimezone(metaAttribute) { try {
+    let searchSelector="meta[itemprop='"+metaAttribute+"']";
+    let funcDateTimeLongFormat=$(searchSelector)[0].content;     //returns "2019-1-5T00:00" (5th jan 2019)
+    //we can directly use it in moment but moment expects double digit months/days so we will have to convert/pad with extra zeroes
+    
+    let funcDate=funcDateTimeLongFormat.split("T")[0];
+    let funcTime=funcDateTimeLongFormat.split("T")[1];
+    
+    let funcYear=funcDate.split("-")[0];
+    console.log("funcYear= ["+funcYear+"]");
+    
+    let funcMonth=String('00' + funcDate.split("-")[1]).slice(-2)
+    console.log("funcMonth= ["+funcMonth+"]");
+    
+    let funcDay=String('00' + funcDate.split("-")[2]).slice(-2)
+    console.log("funcDay= ["+funcDay+"]");
+    
+    let funcDatePadded=funcYear+"-"+funcMonth+"-"+funcDay+"T"+funcTime;
+    console.log("funcDatePadded= ["+funcDatePadded+"]");
+    
+    let momentTime = moment.utc(funcDatePadded);
+    let currTz = jstz.determine().name(); //local timezone
+    let tzTime = momentTime.tz(currTz);
+    let formattedTime = tzTime.format('LLL');
+    console.log("formattedTime= ["+formattedTime+"]");
+    
+    let func_time = "Time in " + currTz + ": " + formattedTime;
+    console.log("return func_time= "+ func_time);
+    return func_time;
+} catch(e){ console.log("function convertIntoTimezone exception=", e);}
+} //function convertIntoTimezone
+
+$("#start_time").html(convertIntoTimezone("startDate"));
+$("#end_time").html(convertIntoTimezone("endDate"));
+
+} catch(e){ console.log("well what do you know, timezone script gives an exception=", e); }</script>
